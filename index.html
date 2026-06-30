@@ -367,6 +367,42 @@
 
   <script>
     const facultadDefault = "Ciencias Biológicas";
+    // URL de la Web App de Apps Script. Solo se usa cuando el
+// formulario corre fuera de Apps Script (ej. GitHub Pages).
+const API_URL = 'https://script.google.com/macros/s/AKfycbyo7fnNAYPplA7rrccdjbQXWZfVowJUNZYvhP48UrqkHciE7-UglNM2lNAo7y1-6Rid2w/exec';
+
+function ejecutandoEnAppsScript() {
+  return typeof google !== 'undefined' &&
+         google.script &&
+         typeof google.script.run !== 'undefined';
+}
+
+function enviarInscripcion(datos) {
+  if (ejecutandoEnAppsScript()) {
+    // ---------- Modo Apps Script ----------
+    return new Promise(function (resolve, reject) {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)
+        .registrarInscripcion(datos);
+    });
+  }
+
+  // ---------- Modo GitHub Pages ----------
+  return fetch(API_URL, {
+    method: 'POST',
+    // text/plain evita el preflight OPTIONS (Apps Script no lo maneja).
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(datos)
+  }).then(function (r) {
+    if (!r.ok) throw new Error('Error de red: ' + r.status);
+    return r.json();
+  });
+}
+
+
+
+    
 
     // ---------- Construir tabla del grupo de 10 ----------
     const cuerpoTabla = document.getElementById('cuerpo-tabla-grupo');
@@ -579,27 +615,27 @@
         }
       }
 
-      google.script.run
-        .withSuccessHandler(function (respuesta) {
-          btnEnviar.disabled = false;
-          btnEnviar.textContent = 'Enviar inscripción';
-          if (respuesta.ok) {
-            document.getElementById('texto-exito').textContent = respuesta.mensaje;
-            form.style.display = 'none';
-            document.getElementById('pantalla-exito').classList.add('visible');
-          } else {
-            mensaje.className = 'error';
-            mensaje.textContent = respuesta.mensaje;
-          }
-        })
-        .withFailureHandler(function (error) {
-          btnEnviar.disabled = false;
-          btnEnviar.textContent = 'Enviar inscripción';
-          mensaje.className = 'error';
-          mensaje.textContent = 'Error: ' + error.message;
-        })
-        .registrarInscripcion(datos);
+     enviarInscripcion(datos)
+  .then(function (respuesta) {
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar inscripción';
+    if (respuesta.ok) {
+      document.getElementById('texto-exito').textContent = respuesta.mensaje;
+      form.style.display = 'none';
+      document.getElementById('pantalla-exito').classList.add('visible');
+    } else {
+      mensaje.className = 'error';
+      mensaje.textContent = respuesta.mensaje;
+    }
+  })
+  .catch(function (error) {
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar inscripción';
+    mensaje.className = 'error';
+    mensaje.textContent = 'Error: ' + error.message;
+  });
     });
   </script>
+  
 </body>
 </html>
