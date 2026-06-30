@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title><?= config.NOMBRE_EVENTO ?> - Inscripción</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32"
+        href="https://files.catbox.moe/zftv8w.png">
+  <link rel="shortcut icon"
+        href="https://files.catbox.moe/zftv8w.png">
+
+  <!-- Color de la barra del navegador en móviles -->
+  <meta name="theme-color" content="#318B7E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#F3F2F0;
+      --surface:#FFFFFF;
+      --ink:#34321A;
+      --ink-soft:#6E4E2D;
+      --primary:#318B7E;
+      --primary-dark:#234F40;
+      --accent:#9E874B;
+      --accent-soft:#E7EFEC;
+      --border:#D9D4C7;
+      --success:#318B7E;
+      --success-soft:#E3EFEA;
+      --error:#B9270E;
+      --error-soft:#FBE7E3;
+      --radius:14px;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font-family:'Inter',system-ui,sans-serif;padding:32px 16px 64px;
+    }
+    .wrap{max-width:680px;margin:0 auto;}
+    .top{text-align:center;margin-bottom:28px;}
+    .top .eyebrow{
+      font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--primary);margin-bottom:8px;
+    }
+    .top h1{
+      font-family:'Sora',sans-serif;font-weight:700;font-size:32px;margin:0 0 6px;
+      color:var(--primary-dark);
+    }
+    .top p{margin:0;color:var(--ink-soft);font-size:15px;}
+
+    .card{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      padding:24px;margin-bottom:18px;
+    }
+    .card h2{
+      font-size:13.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+      color:var(--primary);margin:0 0 16px;
+    }
+
+    .tipos{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media (max-width:480px){.tipos{grid-template-columns:1fr;}}
+    .tipo-opcion{position:relative;}
+    .tipo-opcion input{position:absolute;opacity:0;inset:0;cursor:pointer;}
+    .tipo-opcion label{
+      display:block;border:1.5px solid var(--border);border-radius:10px;padding:14px;
+      cursor:pointer;transition:.15s;
+    }
+    .tipo-opcion label .nombre{font-weight:700;font-size:14.5px;display:block;color:var(--ink);}
+    .tipo-opcion label .desc{font-size:12.5px;color:var(--ink-soft);margin-top:3px;display:block;}
+    .tipo-opcion input:checked + label{border-color:var(--primary);background:var(--accent-soft);}
+    .tipo-opcion input:checked + label .nombre{color:var(--primary-dark);}
+    .tipo-opcion input:focus-visible + label{outline:2px solid var(--primary);outline-offset:2px;}
+
+    .campo{margin-bottom:14px;}
+    .campo label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px;}
+    .campo .ayuda{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
+    input[type=text], input[type=tel], select{
+      width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;
+      font-family:'Inter',sans-serif;font-size:14.5px;color:var(--ink);background:#fff;
+    }
+    input:focus, select:focus{outline:2px solid var(--primary);outline-offset:1px;border-color:var(--primary);}
+
+    .fila{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    @media (max-width:480px){.fila{grid-template-columns:1fr;}}
+    .fila3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+    @media (max-width:560px){.fila3{grid-template-columns:1fr;}}
+
+    .nota{
+      background:var(--accent-soft);border:1px dashed #B6CCC5;border-radius:10px;
+      padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--ink);
+    }
+
+    .oculto{display:none !important;}
+
+    .archivo-input{
+      border:1.5px dashed var(--border);border-radius:10px;padding:16px;text-align:center;
+      font-size:13.5px;color:var(--ink-soft);
+    }
+    .archivo-input input{margin-top:8px;}
+
+    .table-responsive{overflow-x:auto;margin-bottom:6px;}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;}
+    th, td{padding:9px 10px;text-align:center;font-size:13px;border-bottom:1px solid var(--border);}
+    th{background:var(--primary);color:#fff;font-weight:600;font-size:11.5px;text-transform:uppercase;}
+    td input[type=text],
+    td input[type=tel]{
+      width:100%;
+      min-width:140px;
+      padding:10px 12px;
+      font-size:14.5px;
+      border:1.5px solid var(--border);
+      border-radius:9px;
+    }
+
+    button[type=submit]{
+      width:100%;background:var(--primary);color:#fff;border:none;border-radius:10px;
+      padding:15px;font-family:'Inter',sans-serif;font-size:15.5px;font-weight:700;cursor:pointer;
+      transition:.15s;
+    }
+    button[type=submit]:hover{background:var(--primary-dark);}
+    button[type=submit]:disabled{opacity:.6;cursor:default;}
+
+    #mensaje{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:14px;display:none;}
+    #mensaje.ok{display:block;background:var(--success-soft);color:var(--success);border:1px solid #B6CCC5;}
+    #mensaje.error{display:block;background:var(--error-soft);color:var(--error);border:1px solid #E8B7AC;}
+
+    .campo-invalido{
+      border-color:var(--error) !important;
+      box-shadow:0 0 0 1px var(--error);
+      background:var(--error-soft);
+    }
+
+    #pantalla-exito{display:none;text-align:center;padding:36px 24px;}
+    #pantalla-exito.visible{display:block;}
+    #pantalla-exito .icono{font-size:42px;margin-bottom:10px;}
+
+    .bloque-whatsapp{
+      margin-top:20px;padding-top:20px;border-top:1px solid var(--border);
+    }
+    .bloque-whatsapp p{font-size:13.5px;color:var(--ink-soft);margin:0 0 12px;}
+    .bloque-whatsapp img{
+      width:min(280px, 100%);
+      height:auto;
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:6px;
+      background:#fff;
+      margin-bottom:12px;
+    }
+    .btn-whatsapp{
+      display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;
+      text-decoration:none;font-weight:700;font-size:14px;padding:11px 20px;border-radius:9px;
+    }
+    .btn-whatsapp:hover{background:#1EBE57;}
+
+    .btn-ayuda-pago{
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--ink-soft);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: .15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-ayuda-pago:hover{
+      background: var(--accent-soft);
+      color: var(--primary-dark);
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="eyebrow">Inscripción al evento</div>
+      <h1><?= config.NOMBRE_EVENTO ?></h1>
+      <p><?= config.SUBTITULO ?></p>
+    </div>
+
+    <button class="btn-ayuda-pago"
+      onclick="window.top.location.href='https://script.google.com/macros/s/AKfycbyo7fnNAYPplA7rrccdjbQXWZfVowJUNZYvhP48UrqkHciE7-UglNM2lNAo7y1-6Rid2w/exec?page=guia'">
+      💳 Ayuda con el pago
+    </button>
+
+    <div id="pantalla-exito">
+      <div class="card">
+        <div class="icono">✅</div>
+        <h2 style="text-transform:none;font-size:18px;">¡Inscripción registrada!</h2>
+        <p id="texto-exito" style="color:var(--ink-soft);"></p>
+
+        <div class="bloque-whatsapp">
+          <p>Únete al grupo de WhatsApp del evento para recibir avisos y novedades:</p>
+          <img src="https://files.catbox.moe/nkxwii.png" alt="QR grupo de WhatsApp">
+          <br>
+          <a class="btn-whatsapp" href="https://chat.whatsapp.com/Cix0z7MfklF2IRO6JGSNrm?s=qt&p=a&mlu=1" target="_blank" rel="noopener">
+            📲 Unirme al grupo de WhatsApp
+          </a>
+        </div>
+
+        <button type="button" onclick="reiniciarFormulario()" class="btn-reiniciar"
+          style="margin-top:14px;background:var(--accent-soft);color:var(--primary-dark);border:none;border-radius:9px;padding:11px 20px;font-weight:600;cursor:pointer;">
+          Registrar otra inscripción
+        </button>
+      </div>
+    </div>
+
+    <form id="formInscripcion">
+      <div class="card">
+        <h2>1. Tipo de inscripción</h2>
+        <div class="tipos">
+          <div class="tipo-opcion">
+            <input type="radio" name="tipo" id="tipo-estudiante" value="Estudiante" checked>
+            <label for="tipo-estudiante">
+              <span class="nombre">Estudiante</span>
+              <span class="desc">Inscripción individual, con pago</span>
+            </label>
+          </div>
+          <div class="tipo-opcion">
+            <input type="radio" name="tipo" id="tipo-grupo10" value="Grupo10">
+            <label for="tipo-grupo10">
+              <span class="nombre">Grupo de 10</span>
+              <span class="desc">Con descuento, un solo voucher</span>
+            </label>
+          </div>
+          <div class="tipo-opcion">
+            <input type="radio" name="tipo" id="tipo-egresado" value="Egresado">
+            <label for="tipo-egresado">
+              <span class="nombre">Egresado / Profesional</span>
+              <span class="desc">No estudiante universitario, con pago</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="card-datos">
+        <h2>2. Datos</h2>
+
+        <!-- Personal: Estudiante, Egresado -->
+        <div id="bloque-personal">
+          <div class="fila3">
+            <div class="campo">
+              <label for="nombres">Nombres</label>
+              <input type="text" id="nombres" name="nombres">
+            </div>
+            <div class="campo">
+              <label for="apellidoPaterno">Apellido paterno</label>
+              <input type="text" id="apellidoPaterno" name="apellidoPaterno">
+            </div>
+            <div class="campo">
+              <label for="apellidoMaterno">Apellido materno</label>
+              <input type="text" id="apellidoMaterno" name="apellidoMaterno">
+            </div>
+          </div>
+
+          <!-- Estudiante -->
+          <div id="bloque-estudiante-extra" class="fila3">
+            <div class="campo">
+              <label for="universidad">Universidad</label>
+              <select id="universidad" name="universidad">
+                <option value="">Seleccione una universidad</option>
+                <option value="Universidad Nacional de San Antonio Abad del Cusco (UNSAAC)">
+                  Universidad Nacional de San Antonio Abad del Cusco (UNSAAC)
+                </option>
+                <option value="Universidad Nacional Intercultural de Quillabamba (UNIQ)">
+                  Universidad Nacional Intercultural de Quillabamba (UNIQ)
+                </option>
+                <option value="Universidad Nacional Amazónica de Madre de Dios (UNAMAD)">
+                  Universidad Nacional Amazónica de Madre de Dios (UNAMAD)
+                </option>
+                <option value="Universidad Nacional de San Agustín (UNSA)">
+                  Universidad Nacional de San Agustín (UNSA)
+                </option>
+                <option value="Universidad Nacional del Altiplano (UNAP)">
+                  Universidad Nacional del Altiplano (UNAP)
+                </option>
+                <option value="Universidad Andina del Cusco (UAC)">
+                  Universidad Andina del Cusco (UAC)
+                </option>
+                <option value="Universidad Tecnológica de los Andes (UTEA)">
+                  Universidad Tecnológica de los Andes (UTEA)
+                </option>
+                <option value="Otra">Otra universidad</option>
+              </select>
+            </div>
+
+            <div class="campo oculto" id="campo-otra-universidad">
+              <label for="otraUniversidad">Especifique la universidad</label>
+              <input type="text" id="otraUniversidad" name="otraUniversidad">
+            </div>
+
+            <div class="campo">
+              <label for="facultad">Facultad</label>
+              <input type="text" id="facultad" name="facultad" value="<?= config.FACULTAD_DEFAULT ?>">
+            </div>
+
+            <div class="campo" id="campo-codigo">
+              <label for="codigo">Código de estudiante (6 dígitos)</label>
+              <input
+                type="text"
+                id="codigo"
+                name="codigo"
+                maxlength="6"
+                pattern="[0-9]{6}"
+                inputmode="numeric">
+            </div>
+          </div>
+
+          <!-- Egresado -->
+          <div id="bloque-egresado-extra" class="campo oculto">
+            <label for="institucion">Institución</label>
+            <input type="text" id="institucion" name="institucion">
+          </div>
+
+          <div class="fila">
+            <div class="campo">
+              <label for="dni">DNI</label>
+              <input type="text" id="dni" name="dni" maxlength="8" inputmode="numeric">
+              <div class="ayuda">Se usa únicamente para la entrega correcta de tu certificado.</div>
+            </div>
+            <div class="campo">
+              <label for="celular">Celular</label>
+              <input type="tel" id="celular" name="celular">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Grupo de 10 -->
+        <div id="bloque-grupo" class="oculto">
+          <div class="nota">Ingresa a los 10 integrantes. El DNI se usa únicamente para la entrega correcta de certificados.</div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr><th>N°</th><th>Nombres</th><th>Apellido paterno</th><th>Apellido materno</th><th>Universidad</th><th>Facultad</th><th>Código</th><th>DNI</th><th>Celular</th></tr>
+              </thead>
+              <tbody id="cuerpo-tabla-grupo"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voucher: para todos los tipos -->
+      <div class="card" id="bloque-voucher">
+        <h2>3. Voucher de pago</h2>
+        <div class="archivo-input">
+          Sube una foto o captura de tu comprobante
+          <br>
+          <input type="file" id="voucher" accept="image/*,application/pdf" required>
+        </div>
+      </div>
+
+      <button type="submit" id="btnEnviar">Enviar inscripción</button>
+      <div id="mensaje"></div>
+    </form>
+  </div>
+
+  <script>
+    const facultadDefault = "<?= config.FACULTAD_DEFAULT ?>";
+
+    // ---------- Construir tabla del grupo de 10 ----------
+    const cuerpoTabla = document.getElementById('cuerpo-tabla-grupo');
+    for (let i = 1; i <= 10; i++) {
+      const fila = document.createElement('tr');
+      fila.innerHTML =
+        '<td>' + i + '</td>' +
+        '<td><input type="text" class="grupo-nombres" required></td>' +
+        '<td><input type="text" class="grupo-appaterno" required></td>' +
+        '<td><input type="text" class="grupo-apmaterno" required></td>' +
+        '<td><input type="text" class="grupo-universidad" required></td>' +
+        '<td><input type="text" class="grupo-facultad" required value="' + facultadDefault + '"></td>' +
+        '<td><input type="text" class="grupo-codigo" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric"></td>' +
+        '<td><input type="text" class="grupo-dni" required maxlength="8" inputmode="numeric"></td>' +
+        '<td><input type="tel" class="grupo-celular" required></td>';
+      cuerpoTabla.appendChild(fila);
+    }
+
+    // ---------- Mostrar/ocultar bloques según el tipo ----------
+    const radiosTipo            = document.querySelectorAll('input[name="tipo"]');
+    const bloquePersonal        = document.getElementById('bloque-personal');
+    const bloqueGrupo           = document.getElementById('bloque-grupo');
+    const bloqueEstudianteExtra = document.getElementById('bloque-estudiante-extra');
+    const bloqueEgresadoExtra   = document.getElementById('bloque-egresado-extra');
+    const universidad           = document.getElementById('universidad');
+    const campoCodigo           = document.getElementById('campo-codigo');
+    const codigo                = document.getElementById('codigo');
+    // CAMBIO 3: constantes declaradas aquí junto a las demás
+    const campoOtraUniversidad  = document.getElementById('campo-otra-universidad');
+    const otraUniversidad       = document.getElementById('otraUniversidad');
+
+    function marcarRequerido(elemento, requerido) {
+      const campos = elemento.querySelectorAll('input, select');
+      campos.forEach(function (campo) {
+        if (requerido) campo.setAttribute('required', 'required');
+        else campo.removeAttribute('required');
+      });
+    }
+
+    function actualizarFormulario() {
+      const tipo        = document.querySelector('input[name="tipo"]:checked').value;
+      const esGrupo     = tipo === 'Grupo10';
+      const esEgresado  = tipo === 'Egresado';
+      const esEstudiante = tipo === 'Estudiante';
+
+      bloquePersonal.classList.toggle('oculto', esGrupo);
+      bloqueGrupo.classList.toggle('oculto', !esGrupo);
+      bloqueEstudianteExtra.classList.toggle('oculto', !esEstudiante);
+      bloqueEgresadoExtra.classList.toggle('oculto', !esEgresado);
+
+      marcarRequerido(bloquePersonal, !esGrupo);
+      marcarRequerido(bloqueGrupo, esGrupo);
+      marcarRequerido(bloqueEstudianteExtra, esEstudiante);
+      marcarRequerido(bloqueEgresadoExtra, esEgresado);
+
+      document.querySelectorAll('.campo-invalido').forEach(function (c) {
+        c.classList.remove('campo-invalido');
+      });
+
+      // CAMBIO 3: lógica completa para código y "Otra universidad"
+      if (esEstudiante) {
+        const esUNSAAC = universidad.value === 'Universidad Nacional de San Antonio Abad del Cusco (UNSAAC)';
+        const esOtra   = universidad.value === 'Otra';
+
+        // Código: solo obligatorio si es UNSAAC
+        if (esUNSAAC) {
+          campoCodigo.classList.remove('oculto');
+          codigo.required = true;
+        } else {
+          campoCodigo.classList.add('oculto');
+          codigo.required = false;
+          codigo.value = '';
+        }
+
+        // "Otra universidad": solo visible si selecciona Otra
+        if (esOtra) {
+          campoOtraUniversidad.classList.remove('oculto');
+          otraUniversidad.required = true;
+        } else {
+          campoOtraUniversidad.classList.add('oculto');
+          otraUniversidad.required = false;
+          otraUniversidad.value = '';
+        }
+      } else {
+        // Si cambia de tipo, limpiar estado residual
+        campoCodigo.classList.add('oculto');
+        codigo.required = false;
+        campoOtraUniversidad.classList.add('oculto');
+        otraUniversidad.required = false;
+      }
+    }
+
+    radiosTipo.forEach(function (r) { r.addEventListener('change', actualizarFormulario); });
+    // CAMBIO 3: listener para el select de universidad
+    universidad.addEventListener('change', actualizarFormulario);
+    actualizarFormulario();
+
+    // ---------- Envío del formulario ----------
+    const form      = document.getElementById('formInscripcion');
+    const btnEnviar = document.getElementById('btnEnviar');
+    const mensaje   = document.getElementById('mensaje');
+
+    function leerArchivoComoBase64(archivo) {
+      return new Promise(function (resolve, reject) {
+        if (!archivo) return resolve(null);
+        const lector = new FileReader();
+        lector.onload = function () { resolve(lector.result); };
+        lector.onerror = reject;
+        lector.readAsDataURL(archivo);
+      });
+    }
+
+    function reiniciarFormulario() {
+      document.getElementById('pantalla-exito').classList.remove('visible');
+      form.style.display = 'block';
+      form.reset();
+      actualizarFormulario();
+    }
+
+    function formularioTieneEspaciosVacios() {
+      const campos = form.querySelectorAll('input[required], select[required]');
+      let primerCampoInvalido = null;
+
+      campos.forEach(function (campo) {
+        if (campo.closest('.oculto')) {
+          campo.classList.remove('campo-invalido');
+          return;
+        }
+        const vacio = campo.value.trim() === '';
+        campo.classList.toggle('campo-invalido', vacio);
+        if (vacio && !primerCampoInvalido) primerCampoInvalido = campo;
+      });
+
+      if (primerCampoInvalido) {
+        primerCampoInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        primerCampoInvalido.focus();
+        return true;
+      }
+      return false;
+    }
+
+    form.addEventListener('input', function (e) {
+      const campo = e.target;
+      if (campo.classList.contains('campo-invalido') && campo.value.trim() !== '') {
+        campo.classList.remove('campo-invalido');
+      }
+    });
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      if (formularioTieneEspaciosVacios()) {
+        mensaje.className = 'error';
+        mensaje.textContent = 'Hay campos sin completar (marcados en rojo). Revisa que no queden vacíos ni con solo espacios.';
+        mensaje.style.display = 'block';
+        return;
+      }
+
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'Enviando...';
+      mensaje.className = '';
+      mensaje.style.display = '';
+
+      const tipo           = document.querySelector('input[name="tipo"]:checked').value;
+      const archivoVoucher = document.getElementById('voucher').files[0];
+      const voucherBase64  = await leerArchivoComoBase64(archivoVoucher);
+      const voucherNombre  = archivoVoucher ? archivoVoucher.name : '';
+
+      let datos = { tipo: tipo, voucherBase64: voucherBase64, voucherNombre: voucherNombre };
+
+      if (tipo === 'Grupo10') {
+        const nombresEl      = document.querySelectorAll('.grupo-nombres');
+        const apPaternoEl    = document.querySelectorAll('.grupo-appaterno');
+        const apMaternoEl    = document.querySelectorAll('.grupo-apmaterno');
+        const universidadesEl = document.querySelectorAll('.grupo-universidad');
+        const facultadesEl   = document.querySelectorAll('.grupo-facultad');
+        const codigosEl      = document.querySelectorAll('.grupo-codigo');
+        const dnisEl         = document.querySelectorAll('.grupo-dni');
+        const celularesEl    = document.querySelectorAll('.grupo-celular');
+        const integrantes    = [];
+        for (let i = 0; i < nombresEl.length; i++) {
+          integrantes.push({
+            nombres:         nombresEl[i].value.trim(),
+            apellidoPaterno: apPaternoEl[i].value.trim(),
+            apellidoMaterno: apMaternoEl[i].value.trim(),
+            universidad:     universidadesEl[i].value.trim(),
+            facultad:        facultadesEl[i].value.trim(),
+            codigo:          codigosEl[i].value.trim(),
+            dni:             dnisEl[i].value.trim(),
+            celular:         celularesEl[i].value.trim()
+          });
+        }
+        datos.integrantes = integrantes;
+      } else {
+        datos.nombres         = document.getElementById('nombres').value.trim();
+        datos.apellidoPaterno = document.getElementById('apellidoPaterno').value.trim();
+        datos.apellidoMaterno = document.getElementById('apellidoMaterno').value.trim();
+        datos.dni             = document.getElementById('dni').value.trim();
+        datos.celular         = document.getElementById('celular').value.trim();
+
+        if (tipo === 'Egresado') {
+          datos.institucion = document.getElementById('institucion').value.trim();
+        } else {
+          // CAMBIO 4: si eligió "Otra", enviar el texto escrito en lugar de "Otra"
+          datos.universidad = universidad.value === 'Otra'
+            ? otraUniversidad.value.trim()
+            : universidad.value.trim();
+          datos.codigo  = codigo.value.trim();
+          datos.facultad = document.getElementById('facultad').value.trim();
+        }
+      }
+
+      google.script.run
+        .withSuccessHandler(function (respuesta) {
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = 'Enviar inscripción';
+          if (respuesta.ok) {
+            document.getElementById('texto-exito').textContent = respuesta.mensaje;
+            form.style.display = 'none';
+            document.getElementById('pantalla-exito').classList.add('visible');
+          } else {
+            mensaje.className = 'error';
+            mensaje.textContent = respuesta.mensaje;
+          }
+        })
+        .withFailureHandler(function (error) {
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = 'Enviar inscripción';
+          mensaje.className = 'error';
+          mensaje.textContent = 'Error: ' + error.message;
+        })
+        .registrarInscripcion(datos);
+    });
+  </script>
+</body>
+</html>
