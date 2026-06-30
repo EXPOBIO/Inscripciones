@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title><?= config.NOMBRE_EVENTO ?> - Guía de pago</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32"
+        href="https://files.catbox.moe/zftv8w.png">
+  <link rel="shortcut icon"
+        href="https://files.catbox.moe/zftv8w.png">
+
+  <!-- Color de la barra del navegador en móviles -->
+  <meta name="theme-color" content="#0B5FA5">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#F2F8FC;
+      --surface:#FFFFFF;
+      --ink:#16263A;
+      --ink-soft:#5C7184;
+      --primary:#0B5FA5;
+      --primary-dark:#08436F;
+      --accent-soft:#E3F3FB;
+      --border:#D8E6EE;
+      --success:#1E7A52;
+      --success-soft:#E1F2EA;
+      --error:#B23A3A;
+      --radius:14px;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font-family:'Inter',system-ui,sans-serif;padding:32px 16px 64px;
+    }
+    .wrap{max-width:640px;margin:0 auto;}
+
+    .top{text-align:center;margin-bottom:24px;}
+    .top .eyebrow{
+      font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--primary);margin-bottom:8px;
+    }
+    .top h1{
+      font-family:'Sora',sans-serif;font-weight:700;font-size:25px;margin:0 0 6px;
+      color:var(--primary-dark);
+    }
+    .top p{margin:0;color:var(--ink-soft);font-size:14.5px;}
+
+    .card{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      padding:22px;margin-bottom:16px;
+    }
+    .card h2{
+      font-size:15.5px;font-weight:700;margin:0 0 10px;color:var(--ink);
+    }
+    .card p{color:var(--ink-soft);line-height:1.5;font-size:14px;margin:0 0 12px;}
+
+    .qr-box{text-align:center;margin:14px 0;}
+    .qr-box img{
+      max-width:190px;width:100%;border-radius:10px;border:1px solid var(--border);
+      display:none;margin:0 auto;
+    }
+    .qr-cargando{font-size:13px;color:var(--ink-soft);padding:30px 0;}
+    .qr-error{font-size:13px;color:var(--error);padding:16px 0;}
+    .qr-box small{display:block;margin-top:8px;font-size:12.5px;color:var(--ink-soft);}
+
+    .datos-pago{background:var(--accent-soft);border-radius:10px;padding:6px 16px;margin-top:14px;}
+    .dato-fila{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:10px 0;border-bottom:1px solid #D7E9F3;font-size:13.5px;
+    }
+    .dato-fila:last-child{border-bottom:none;}
+    .dato-fila .etiqueta{
+      color:var(--ink-soft);font-weight:600;font-size:11.5px;text-transform:uppercase;
+      letter-spacing:.02em;margin-bottom:2px;
+    }
+    .dato-fila .valor{font-weight:600;color:var(--ink);word-break:break-all;}
+    .btn-copiar{
+      flex-shrink:0;border:1px solid var(--border);background:#fff;color:var(--primary);
+      border-radius:7px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer;
+      font-family:'Inter',sans-serif;
+    }
+    .btn-copiar:hover{background:var(--accent-soft);}
+    .btn-copiar.copiado{background:var(--success-soft);color:var(--success);border-color:#BEE3D1;}
+
+    ul.lista-fisico{padding-left:18px;color:var(--ink-soft);font-size:14px;line-height:1.7;margin:0;}
+
+    .volver{
+      display:block;text-align:center;color:var(--ink-soft);text-decoration:none;
+      font-size:13.5px;margin-top:8px;
+    }
+    .volver:hover{color:var(--primary);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="eyebrow"><?= config.NOMBRE_EVENTO ?></div>
+      <h1>💳 Guía de métodos de pago</h1>
+      <p>Puedes pagar por un medio digital o de forma física con la comitiva organizadora.</p>
+    </div>
+
+    <section class="card">
+      <h2>📱 Pago digital (Yape / apps bancarias)</h2>
+      <p>
+        Puedes pagar por Yape o desde tu app bancaria (BCP, Interbank, Caja Cusco u otras)
+        usando los datos de abajo. Después, sube la captura de tu comprobante en el formulario
+        de inscripción.
+      </p>
+
+      <div class="qr-box">
+        <div class="qr-cargando" id="qr-cargando">Cargando QR...</div>
+        <img
+          id="qr-imagen"
+          src="https://files.catbox.moe/m55d7h.jpg"
+          alt="QR de pago Yape"
+          onload="document.getElementById('qr-cargando').style.display='none'; this.style.display='block';"
+          onerror="document.getElementById('qr-cargando').outerHTML='&lt;div class=&quot;qr-error&quot;&gt;No se pudo cargar la imagen del QR. Usa los datos de abajo para pagar manualmente.&lt;/div&gt;';">
+        <small>Escanea el código QR desde tu app de Yape para pagar directo</small>
+      </div>
+
+      <div class="datos-pago">
+
+  <div class="dato-fila">
+    <div>
+      <div class="etiqueta">Titular</div>
+      <div class="valor">Emerson Alexander Quispe Zea</div>
+    </div>
+  </div>
+
+  <div class="dato-fila">
+    <div>
+      <div class="etiqueta">Yape</div>
+      <div class="valor" id="valor-yape">925535748</div>
+    </div>
+    <button class="btn-copiar" onclick="copiar('valor-yape', this)">
+      📋 Copiar
+    </button>
+  </div>
+
+  <div class="dato-fila">
+    <div>
+      <div class="etiqueta">Cuenta BCP</div>
+      <div class="valor" id="valor-bcp">28516648723057</div>
+    </div>
+    <button class="btn-copiar" onclick="copiar('valor-bcp', this)">
+      📋 Copiar
+    </button>
+  </div>
+
+  <div class="dato-fila">
+    <div>
+      <div class="etiqueta">CCI BCP</div>
+      <div class="valor" id="valor-cci">00228511664872305753</div>
+    </div>
+    <button class="btn-copiar" onclick="copiar('valor-cci', this)">
+      📋 Copiar
+    </button>
+  </div>
+
+</div>
+
+
+    </section>
+
+    <section class="card">
+      <h2>🏢 Pago físico</h2>
+      <p>
+        También puedes pagar directamente con la comitiva encargada de EXPOBIO. Ellos registran
+        tu pago y te entregan la confirmación correspondiente.
+      </p>
+      <ul class="lista-fisico">
+        <li>📍 Punto de pago: Coordinación EXPOBIO (fecha por definir por la comitiva)</li>
+        <li>👥 Responsable: Comitiva EXPOBIO</li>
+        <li>🧾 Solicita siempre tu comprobante o registro de pago</li>
+      </ul>
+    </section>
+
+    <a href="https://script.google.com/macros/s/AKfycbyo7fnNAYPplA7rrccdjbQXWZfVowJUNZYvhP48UrqkHciE7-UglNM2lNAo7y1-6Rid2w/exec?page=index"
+   class="volver">
+  ← Volver a la inscripción</a>
+  </div>
+
+  <script>
+    function copiar(idElemento, boton) {
+      const texto = document.getElementById(idElemento).textContent;
+
+      function marcarExito() {
+        const original = boton.textContent;
+        boton.textContent = '✓ Copiado';
+        boton.classList.add('copiado');
+        setTimeout(function () {
+          boton.textContent = original;
+          boton.classList.remove('copiado');
+        }, 1500);
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(marcarExito).catch(function () {
+          alert('Copia este valor manualmente: ' + texto);
+        });
+      } else {
+        alert('Copia este valor manualmente: ' + texto);
+      }
+    }
+  </script>
+</body>
+</html>
